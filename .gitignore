@@ -61,3 +61,6 @@ target/
 
 # pyenv python configuration file
 .python-version
+
+# for testing files
+test_script.py
