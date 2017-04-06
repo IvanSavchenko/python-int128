@@ -6,6 +6,7 @@ The main functionality is to conver to to binary format or any other.
 
 from __future__ import absolute_import
 
+import functools
 import struct
 
 import int128.constants as constants
@@ -14,7 +15,7 @@ import int128.constants as constants
 class Int128(object):
     """Int128 class."""
 
-    GET_BYTES_PATTERN = "_to_bytes_python_{}"
+    TO_BYTES_PATTERN = "_to_bytes_python_{}"
     FROM_BYTES_PATTERN = "_from_bytes_python_{}"
 
     def __init__(self, value=None):
@@ -22,7 +23,7 @@ class Int128(object):
         self.value = value
 
         self.to_bytes = \
-            getattr(self, self.GET_BYTES_PATTERN.format(constants.PY_VERSION))
+            getattr(self, self.TO_BYTES_PATTERN.format(constants.PY_VERSION))
 
         self.from_bytes = \
             getattr(self, self.FROM_BYTES_PATTERN.format(constants.PY_VERSION))
@@ -31,6 +32,7 @@ class Int128(object):
         """Get integer in binary format for Python 3."""
         if value is None:
             value = self.value
+
         return value.to_bytes(constants.INT128_BYTES, byteorder=byteorder)
 
     def _to_bytes_python_2(self, value=None, byteorder='big'):
@@ -77,4 +79,4 @@ class Int128(object):
                  for order, word in enumerate(reversed(words))]
 
         # Return the concatenation.
-        return reduce(lambda y, x: y | x, words)
+        return functools.reduce(lambda y, x: y | x, words)
