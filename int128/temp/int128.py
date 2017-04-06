@@ -1,11 +1,13 @@
 """Int 128 implementation for Python.
 
 This module contains the implementation int128 for Python.
-The main functionality is to conver to to binary format or any other.
+The main functionality is to encode to the binary format or any other as and
+decode from bytes to integer.
 """
 
 from __future__ import absolute_import
 
+import functools
 import struct
 
 import int128.constants as constants
@@ -31,6 +33,7 @@ class Int128(object):
         """Get integer in binary format for Python 3."""
         if value is None:
             value = self.value
+
         return value.to_bytes(constants.INT128_BYTES, byteorder=byteorder)
 
     def _to_bytes_python_2(self, value=None, byteorder='big'):
@@ -77,4 +80,4 @@ class Int128(object):
                  for order, word in enumerate(reversed(words))]
 
         # Return the concatenation.
-        return reduce(lambda y, x: y | x, words)
+        return functools.reduce(lambda y, x: y | x, words)
