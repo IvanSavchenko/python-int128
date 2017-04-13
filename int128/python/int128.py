@@ -1,22 +1,19 @@
-"""Int 128 implementation for Python.
+"""Int 128 implementation for Python on Python.
 
 This module contains the implementation int128 for Python.
 The main functionality is to encode to the binary format or any other as and
 decode from bytes to integer.
 """
 
-from __future__ import absolute_import
-
-import functools
 import struct
 
-import int128.constants as constants
+from . import constants
 
 
 class Int128(object):
     """Int128 class."""
 
-    GET_BYTES_PATTERN = "_to_bytes_python_{}"
+    TO_BYTES_PATTERN = "_to_bytes_python_{}"
     FROM_BYTES_PATTERN = "_from_bytes_python_{}"
 
     def __init__(self, value=None):
@@ -24,7 +21,7 @@ class Int128(object):
         self.value = value
 
         self.to_bytes = \
-            getattr(self, self.GET_BYTES_PATTERN.format(constants.PY_VERSION))
+            getattr(self, self.TO_BYTES_PATTERN.format(constants.PY_VERSION))
 
         self.from_bytes = \
             getattr(self, self.FROM_BYTES_PATTERN.format(constants.PY_VERSION))
@@ -47,8 +44,9 @@ class Int128(object):
             value = self.value
 
         # 2 integers will be converted as int64.
-        separeted_ints = (value >> constants.INT64_BITS, value)
-        words = map(lambda x: x & constants.INT64_MAX_VALUE, separeted_ints)
+        first_word = ((value >> constants.INT64_BITS) &
+                      constants.INT64_MAX_VALUE)
+        second_word = value & constants.INT64_MAX_VALUE
 
         formula = '{ordering}{count}{pattern}'.format(
             ordering=constants.BYTES_ORDERING[byteorder],
@@ -56,7 +54,7 @@ class Int128(object):
             pattern=constants.INT64_STRUCT_FORMULA)
 
         # Here this 2 integers will be concatenated.
-        return struct.pack(formula, *words)
+        return struct.pack(formula, first_word, second_word)
 
     def _from_bytes_python_3(self, int_in_bytes, byteorder='big'):
         """Get integer from bytes for Python 3."""
@@ -67,7 +65,7 @@ class Int128(object):
 
         This function will decode bytes as 128 bit integer separate on
         2 64 integer. The result will be the concatenation of 64 integers
-        with respect to the order
+        with respect to the order.
         """
         formula = '{ordering}{count}{pattern}'.format(
             ordering=constants.BYTES_ORDERING[byteorder],
@@ -75,9 +73,8 @@ class Int128(object):
             pattern=constants.INT64_STRUCT_FORMULA)
 
         # Get 2 words as int64.
-        words = struct.unpack(formula, int_in_bytes)
-        words = [word << (constants.INT64_BITS * order)
-                 for order, word in enumerate(reversed(words))]
+        first_word, second_word = struct.unpack(formula, int_in_bytes)
 
         # Return the concatenation.
-        return functools.reduce(lambda y, x: y | x, words)
+        first_word = first_word << constants.INT64_BITS
+        return first_word | second_word
