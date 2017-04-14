@@ -66,3 +66,5 @@ target/
 test_script.py
 build
 *.so
+setup_cython.py
+performance.py
