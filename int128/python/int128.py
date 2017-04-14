@@ -34,9 +34,7 @@ def _to_bytes_python_2(int128, byteorder='big'):
         raise ValueError(('Provided bad byteorder value. Need to be one of the'
                           ' next: {0}').format(constants.BYTES_ORDERING_LIST))
 
-    # 2 integers will be converted as int64.
-    first_word = ((int128 >> constants.INT64_BITS) &
-                  constants.INT64_MAX_VALUE)
+    first_word = ((int128 >> constants.INT64_BITS) & constants.INT64_MAX_VALUE)
     second_word = int128 & constants.INT64_MAX_VALUE
 
     formula = '{ordering}{count}{pattern}'.format(
@@ -44,7 +42,6 @@ def _to_bytes_python_2(int128, byteorder='big'):
         count=constants.INT128_BITS / constants.INT64_BITS,
         pattern=constants.INT64_STRUCT_FORMULA)
 
-    # Here this 2 integers will be concatenated.
     return struct.pack(formula, first_word, second_word)
 
 
@@ -65,11 +62,10 @@ def _from_bytes_python_2(int_in_bytes, byteorder='big'):
         count=constants.INT128_BITS / constants.INT64_BITS,
         pattern=constants.INT64_STRUCT_FORMULA)
 
-    # Get 2 words as int64.
     first_word, second_word = struct.unpack(formula, int_in_bytes)
 
-    # Return the concatenation.
     first_word = first_word << constants.INT64_BITS
+
     return first_word | second_word
 
 

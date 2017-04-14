@@ -40,7 +40,7 @@ cdef unsigned short INT64_BITS = 64
 cdef int64 INT64_MAX_VALUE = (1 << 64) - 1
 
 # Bytes ordering list and patterns for struct module.
-# cdef tuple BYTES_ORDERS = ('big', 'network', 'little', 'native')
+cdef tuple BYTES_ORDERING_LIST = ('big', 'network', 'little', 'native')
 cdef dict BYTES_ORDERING = {
     'big': '>',
     'network': '!',
@@ -66,13 +66,12 @@ cpdef bytes to_bytes(int128 value, str byteorder='big'):
     :return: 16 bytes which represents the provided integer
     :return type: bytes
     """
-    if byteorder not in BYTES_ORDERS:
+    if byteorder not in BYTES_ORDERING_LIST:
         raise ValueError(('Bad byteorder provided. Need to be one of this:'
-                          '{0}.').format(BYTES_ORDERS))
+                          '{0}.').format(BYTES_ORDERING_LIST))
 
     cdef int64 first_word, second_word
 
-    # 2 integers will be converted as int64.
     first_word = (value >> INT64_BITS)
     second_word = value
 
@@ -81,6 +80,7 @@ cpdef bytes to_bytes(int128 value, str byteorder='big'):
 
     return _struct.pack('%s2Q' % BYTES_ORDERING[byteorder],
                         first_word, second_word)
+
 
 cpdef int128 from_bytes(bytes value, str byteorder='big'):
     """Decode integer to bytes.
@@ -100,17 +100,16 @@ cpdef int128 from_bytes(bytes value, str byteorder='big'):
     :return: decoded integer
     :return type: int128
     """
-    # Need to rework it!
-    if byteorder not in BYTES_ORDERS:
+    if byteorder not in BYTES_ORDERING_LIST:
         raise ValueError(('Bad byteorder provided. Need to be one of this:'
-                          '{0}.').format(BYTES_ORDERS))
+                          '{0}.').format(BYTES_ORDERING_LIST))
 
     cdef int128 first_word
     cdef int64 second_word
 
-    # Get 2 words as int64.
     first_word, second_word = \
         _struct.unpack('%s2Q' % BYTES_ORDERING[byteorder], value)
 
     first_word = first_word << INT64_BITS
+
     return first_word | second_word
