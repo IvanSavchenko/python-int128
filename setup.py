@@ -31,7 +31,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author="Ivan Savchenko",
     author_email='iam.savchenko@gmail.com',
-    url='https://github.com/IvanSavchenko/python_int128',
+    url='https://github.com/IvanSavchenko/python-int128',
     packages=[
         'int128',
     ],
