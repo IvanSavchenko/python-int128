@@ -24,9 +24,10 @@ INT64_MAX_VALUE = (1 << INT64_BITS) - 1
 INT64_STRUCT_FORMULA = 'Q'
 
 # Bytes ordering patteron for struct module.
+BYTES_ORDERING_LIST = ('big', 'network', 'little', 'native')
 BYTES_ORDERING = {
     'big': '>',
-    'netword': '!',
+    'network': '!',
     'little': '<',
     'native': '@'
 }

@@ -1,8 +1,9 @@
 """Compile cython files."""
-from distutils.core import setup
-from Cython.Build import cythonize
+from distutils.core import setup, Extension
 
 setup(
     name='Python Int128',
-    ext_modules=cythonize("int128/int128.pyx"),
+    ext_modules=[Extension('int128.int128',
+                           ['int128/int128.c'],
+                           extra_compile_args=['-O2'])]
 )

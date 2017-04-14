@@ -25,7 +25,10 @@ __author__ = """Ivan Savchenko"""
 __email__ = 'iam.savchenko@gmail.com'
 __version__ = '0.2.0'
 
-__all__ = ('Int128', '_Int128')
+__all__ = ('to_bytes', 'from_bytes', '_to_bytes', '_from_bytes')
 
-from int128.int128 import Int128
-from int128.python.int128 import Int128 as _Int128
+from int128.int128 import to_bytes
+from int128.int128 import from_bytes
+
+from int128.python.int128 import to_bytes as _to_bytes
+from int128.python.int128 import from_bytes as _from_bytes
